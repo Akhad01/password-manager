@@ -1,7 +1,6 @@
 package account
 
 import (
-	"encoding/json"
 	"errors"
 	"math/rand/v2"
 	"net/url"
@@ -24,16 +23,6 @@ func (acc *Account) OutputPassword() {
 	color.Cyan(acc.Login)
 	color.Blue(acc.Password)
 	color.Yellow(acc.Url)
-}
-
-func (acc *Account) ToBytes() ([]byte, error) {
-	file, err := json.Marshal(acc)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return file, nil
 }
 
 func (acc *Account) generatePassword(n int) {
