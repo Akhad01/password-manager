@@ -2,21 +2,22 @@ package main
 
 import (
 	"demo/password/account"
-	"demo/password/files"
 	"fmt"
+
+	"github.com/fatih/color"
 )
 
 func main() {
-	
+	vault := account.NewVault()	
 Menu:	
 	for {
 		variant := getMenu()
 
 		switch variant {
 		case 1:
-			createAccount()
+			createAccount(vault)
 		case 2:
-			findAccound()
+			findAccound(vault)
 		case 3:
 			deleteAccount()
 		default:
@@ -38,10 +39,20 @@ func getMenu() int {
 
 func deleteAccount() {}
 
-func findAccound() {
+func findAccound(vault *account.Vault) {
+	url := promptData("Введите URL для поиска")
+	accounts := vault.FindAccountsByUrl(url) 
+
+	if len(accounts) == 0 {
+		color.Red("Аккаунтов не найдено")
+	}
+
+	for _, acc := range accounts {
+		acc.Output()
+	}
 }
 
-func createAccount() {
+func createAccount(vault *account.Vault) {
 	login := promptData("Введите логин")
 	password := promptData("Введите пароль")
 	url := promptData("Введите URL")
@@ -52,16 +63,7 @@ func createAccount() {
 		return
 	}
 
-	vault := account.NewVault()
-	vault.AddAccount(*myAccount)
-	data, err := vault.ToBytes()
-
-	if err != nil {
-		fmt.Println("Не удалось преобразовать в JSON")
-		return 
-	}
-
-	files.WriteFile(data, "data.json")
+	vault.AddAccount(*myAccount) 
 }
 
 func promptData(prompt string) string {
